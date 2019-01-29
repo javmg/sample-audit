@@ -111,6 +111,41 @@ public class CommentRestControllerIT extends AbstractIT {
     }
 
     @Test
+    public void testSearchKoForbidden() {
+
+        //
+        // business
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/comments/paged?own=true&title=title", GET, null, String.class);
+
+        //
+        // check response
+
+        assertThat(responseEntity, hasProperty("statusCode", is(FORBIDDEN)));
+    }
+
+    @Test
+    public void testSearchOk() {
+
+        //
+        // business
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/comments/paged?own=true&title=title", GET, tokenSupport.toRequest(null), String.class);
+
+        //
+        // check response
+
+        assertThat(responseEntity, hasProperty("statusCode", is(OK)));
+
+        String body = responseEntity.getBody();
+
+        assertThat(body, allOf(
+                hasJsonPath("$.totalPages", is(1)),
+                hasJsonPath("$.totalElements", is(2))
+        ));
+    }
+
+    @Test
     public void testUpdateKoForbidden() {
 
         //

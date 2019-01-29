@@ -6,11 +6,10 @@ import com.jmgits.sample.audit.publisher.SimpleEventPublisher;
 import com.jmgits.sample.audit.repository.CommentRepository;
 import com.jmgits.sample.audit.repository.UserRepository;
 import com.jmgits.sample.audit.service.CommentService;
-import com.jmgits.sample.audit.view.ActivityLogEvent;
-import com.jmgits.sample.audit.view.CommentCreateOrUpdate;
-import com.jmgits.sample.audit.view.CommentSimple;
-import com.jmgits.sample.audit.view.TokenData;
+import com.jmgits.sample.audit.view.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +40,14 @@ public class CommentServiceImpl implements CommentService {
         simpleEventPublisher.publishEvent(new ActivityLogEvent("Comment created.", tokenData.getUsername()));
 
         return commentMapper.transformSimple(commentRepository.save(entity));
+    }
+
+    @Override
+    public Page<CommentSimple> search(CommentSearch criteria, Pageable page, TokenData tokenData) {
+
+        Page<Comment> entities = commentRepository.search(criteria, page, tokenData);
+
+        return commentMapper.transformPageSimple(entities, page);
     }
 
     @Override

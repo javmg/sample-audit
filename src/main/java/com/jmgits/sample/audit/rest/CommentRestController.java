@@ -3,10 +3,13 @@ package com.jmgits.sample.audit.rest;
 import com.jmgits.sample.audit.service.CommentService;
 import com.jmgits.sample.audit.util.SecurityUtils;
 import com.jmgits.sample.audit.view.CommentCreateOrUpdate;
+import com.jmgits.sample.audit.view.CommentSearch;
 import com.jmgits.sample.audit.view.CommentSimple;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +31,12 @@ public class CommentRestController {
     @PostMapping
     public CommentSimple create(@Validated @RequestBody CommentCreateOrUpdate criteria) {
         return commentService.create(criteria, SecurityUtils.getTokenData());
+    }
+
+    @ApiOperation(value = "Search for comments (paged)")
+    @GetMapping("/paged")
+    public Page<CommentSimple> search(@ModelAttribute CommentSearch criteria, Pageable page) {
+        return commentService.search(criteria, page, SecurityUtils.getTokenData());
     }
 
     @ApiOperation(value = "Get all comments")

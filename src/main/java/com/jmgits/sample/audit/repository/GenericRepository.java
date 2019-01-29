@@ -3,6 +3,7 @@ package com.jmgits.sample.audit.repository;
 import com.jmgits.sample.audit.domain.AbstractEntity;
 import com.jmgits.sample.audit.exception.NotFoundCodeException;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.util.Collection;
@@ -13,7 +14,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @NoRepositoryBean
-public interface GenericRepository<T extends AbstractEntity> extends JpaRepository<T, Long> {
+public interface GenericRepository<T extends AbstractEntity> extends JpaRepository<T, Long>, QuerydslPredicateExecutor<T> {
 
     List<T> findByIdIn(Collection<Long> ids);
 
@@ -42,7 +43,7 @@ public interface GenericRepository<T extends AbstractEntity> extends JpaReposito
         return results;
     }
 
-    default T getById(Long id){
+    default T getById(Long id) {
         return findById(id).orElseThrow(() -> getNotFoundException(id));
     }
 }
